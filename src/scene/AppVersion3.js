@@ -23,54 +23,10 @@ export default class App {
     beforeNewPoint = 0.0
 
     constructor() {
-        this.direction = {
-            horizontal: 0.0,
-            vertical: 0.0,
-            rotating: false,
-            oldX: 0.0,
-            oldY: 0.0,
-
-        }
-        this.scaling = {
-            speed: 1.0,
-            direction: 0.0,
-            max: 3.0,
-            min: 1.0,
-        }
         this.scene = new THREE.Scene();
         this.canvas = document.getElementById('main-view')
         this.canvas.width = this.canvas.clientWidth
         this.canvas.height = this.canvas.clientHeight
-        this.scale = this.canvas.clientHeight / 720.0;
-
-        this.canvas.onmousedown = function (e) {
-            if (e.button === 0) {
-                console.log('rotating start')
-                this.direction.rotating = true
-                this.direction.oldX = e.clientX
-                this.direction.oldY = e.clientY
-            }
-
-        }.bind(this);
-
-        this.canvas.onmouseup = function (e) {
-            if (e.button === 0) {
-                console.log('rotating end')
-                this.direction.rotating = false
-            }
-        }.bind(this);
-
-        this.canvas.onmousemove = function (e) {
-            if (this.direction.rotating) {
-                this.direction.horizontal += 0.01 * (e.clientX - this.direction.oldX)
-                // this.direction.vertical += 0.01 * (e.clientY - this.direction.oldY)
-                console.log('rotating move')
-                this.direction.oldX = e.clientX
-                this.direction.oldY = e.clientY
-            }
-
-
-        }.bind(this);
 
 
         this.renderer = new THREE.WebGLRenderer({
@@ -87,7 +43,7 @@ export default class App {
         // this.camera = new THREE.PerspectiveCamera(
         //     50, this.canvas.width / this.canvas.height, 0.1, 35000
         // )
-        this.camera.position.set(0, 200, 200);
+        this.camera.position.set(100, 100, 100);
         // this.camera.rotateOnAxis(new THREE.Vector3(-1, 1, -1), Math.PI / 4.0)
         this.camera.lookAt(0, 0, -1);
         this.camera.updateMatrix()
@@ -112,24 +68,16 @@ export default class App {
         // this.particleManager4 = new ParticleManager(this.root, 0x00ffff, this.ar, 1000, 0.001)
         // this.particleManager5 = new ParticleManager(this.root, 0xffffff, this.ar, 1000, 0.001)
         this.particleManagers = []
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 30; i++) {
             const color = new THREE.Color(
                 Math.random() * 0.7 + 0.3,
                 Math.random() * 0.2 + 0.3,
                 Math.random() * 0.7 + 0.3,
             )
-            const particleManager = new ParticleManager(this.root, color.getHex(), this.ar, 200, 0.001,
-                (0.5 + Math.random()) * this.scale,
-                new THREE.Vector3(
-                    (Math.random() - 0.5) * 100.0,
-                    (Math.random() - 0.5) * 100.0,
-                    (Math.random() - 0.5) * 100.0,
-                ))
-            this.root.add(particleManager)
-            // this.particleManagers.push(
-            //     particleManager,
-            // )
-
+            this.particleManagers.push(
+                new ParticleManager(this.root, color.getHex(), this.ar, 1000, 0.001,
+                    0.5 + Math.random() * 1.0)
+            )
         }
 
 
@@ -152,21 +100,8 @@ export default class App {
 
     update(deltaTime) {
         this._time += deltaTime
-        if (Math.random() < 0.1) {
-            let worldScale = new THREE.Vector3()
-            this.root.getWorldScale(worldScale)
-            console.log(worldScale)
 
-
-        }
-
-
-        // this.root.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.1 * deltaTime)
-        // this.root.rotateOnWorldAxis(new THREE.Vector3(this.direction.vertical, this.direction.horizontal, 0.0), deltaTime)
-        this.root.rotateOnWorldAxis(new THREE.Vector3(1.0, 0.0, 0.0), deltaTime * this.direction.vertical)
-        this.root.rotateOnWorldAxis(new THREE.Vector3(0.0, 1.0, 0.0), deltaTime * this.direction.horizontal)
-        this.direction.vertical *= (1.0 - 0.5 * deltaTime)
-        this.direction.horizontal *= (1.0 - 0.5 * deltaTime)
+        this.root.rotateOnAxis(new THREE.Vector3(0.0, 1.0, 0.0), 0.1 * deltaTime)
         // this.particleManager.update(deltaTime)
         // this.particleManager1.update(deltaTime)
         // this.particleManager2.update(deltaTime)
@@ -174,46 +109,9 @@ export default class App {
         // this.particleManager4.update(deltaTime)
         // this.particleManager5.update(deltaTime)
 
-        const forRemoving = []
-        for (let particleManager of this.root.children) {
+        for (let particleManager of this.particleManagers){
             particleManager.update(deltaTime)
-            if (particleManager.position.y > 100.0) {
-                particleManager.position.set(
-                    (Math.random() - 0.5) * 100.0,
-                    (Math.random() - 1.5) * 50.0,
-                    (Math.random() - 0.5) * 100.0,
-                )
-                particleManager.reset()
-
-                // this.root.remove(particleManager)
-                // if (this.root.children.includes([particleManager])){
-
-                // this.particleManagers = this.particleManagers.splice(this.particleManagers.indexOf(particleManager), 1)
-                // }
-
-                // // forRemoving.push(particleManager)
-                // const color = new THREE.Color(
-                //     Math.random() * 0.7 + 0.3,
-                //     Math.random() * 0.2 + 0.3,
-                //     Math.random() * 0.7 + 0.3,
-                // )
-                // const particleManager = new ParticleManager(this.root, color.getHex(), this.ar, 200, 0.001,
-                //     0.5 + Math.random(),
-                //     new THREE.Vector3(
-                //         (Math.random() - 0.5) * 100.0,
-                //         (Math.random() - 0.5) * 10.0,
-                //         (Math.random() - 0.5) * 100.0,
-                //     ))
-                // this.root.add(particleManager)
-                // this.particleManagers.push(
-                //     particleManager,
-                // )
-            }
         }
-        // for (let pm of forRemoving) {
-        //     this.root.remove(pm)
-        //     this.particleManagers = this.particleManagers.splice(this.particleManagers.indexOf(pm), 1)
-        // }
 
         this._controller.update(deltaTime)
         this.updateUniforms(deltaTime)
