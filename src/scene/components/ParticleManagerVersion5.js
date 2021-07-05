@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import LogoManager from "./LogoManager";
 
 
 export default class ParticleManager extends THREE.Object3D {
@@ -6,7 +7,18 @@ export default class ParticleManager extends THREE.Object3D {
     _time = 0.0
 
     constructor(scene, color = 0xffffff, ar = 1.0, count = 1000, frequence = 1.0, size = 1.0, start = new THREE.Vector3()) {
+
         super()
+        if (Math.random() < 0.1){
+            this.logoManager=  new LogoManager()
+            this.logoManager.build()
+            this.logoManager.rotateOnWorldAxis(new THREE.Vector3(1.0, 0.0, 0.0), - Math.PI / 2.0)
+            this.add(this.logoManager)
+
+        }
+
+
+
         this.verticalSpeed = 5.0 + Math.random() * 15.0
         this.size = size
         this.position.set(start.x, start.y, start.z)

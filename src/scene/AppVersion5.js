@@ -3,7 +3,7 @@ import Octovoxel from "./components/Octovoxel";
 import CameraController from "./service/CameraController";
 import {BoxGeometry} from "three";
 import ParticleManager from "./components/ParticleManager";
-
+import LogoManager from "./components/LogoManager";
 export default class App {
 
 
@@ -100,7 +100,7 @@ export default class App {
         // this.camera = new THREE.PerspectiveCamera(
         //     50, this.canvas.width / this.canvas.height, 0.1, 35000
         // )
-        this.camera.position.set(0, 300, 300);
+        this.camera.position.set(0, 200, 200);
         // this.camera.rotateOnAxis(new THREE.Vector3(-1, 1, -1), Math.PI / 4.0)
         this.camera.lookAt(0, 0, -1);
         this.camera.updateMatrix()
@@ -125,18 +125,18 @@ export default class App {
         // this.particleManager4 = new ParticleManager(this.root, 0x00ffff, this.ar, 1000, 0.001)
         // this.particleManager5 = new ParticleManager(this.root, 0xffffff, this.ar, 1000, 0.001)
         this.particleManagers = []
-        for (let i = 0; i < 50; i++) {
+        for (let i = 0; i < 150; i++) {
             const color = new THREE.Color(
-                Math.random() * 0.7 + 0.3,
                 Math.random() * 0.2 + 0.3,
+                Math.random() * 0.7 + 0.3,
                 Math.random() * 0.7 + 0.3,
             )
             const particleManager = new ParticleManager(this.root, color.getHex(), this.ar, 200, 0.001,
                 (0.5 + Math.random()) * this.scale,
                 new THREE.Vector3(
-                    (Math.random() - 0.5) * 50.0 * this.ar,
-                    (Math.random() - 0.5) * 50.0,
-                    (Math.random() - 0.5) * 50.0* this.ar,
+                    (Math.random() - 0.5) * 250.0 * this.ar,
+                    (Math.random() - 0.5) * 100.0,
+                    (Math.random() - 0.5) * 250.0* this.ar,
                 ))
             this.root.add(particleManager)
             // this.particleManagers.push(
@@ -145,6 +145,11 @@ export default class App {
 
         }
 
+
+        // this.logoManager=  new LogoManager()
+        // this.logoManager.build()
+        // this.logoManager.rotateOnWorldAxis(new THREE.Vector3(1.0, 0.0, 0.0), - Math.PI / 2.0)
+        // this.scene.add(this.logoManager)
 
         // const axesHelper = new THREE.AxesHelper(1000)
         // this.scene.add(axesHelper)
@@ -192,9 +197,9 @@ export default class App {
             particleManager.update(deltaTime)
             if (particleManager.position.y > 100.0) {
                 particleManager.position.set(
-                    (Math.random() - 0.5) * 50.0* this.ar,
+                    (Math.random() - 0.5) * 250.0* this.ar,
                     (Math.random() - 1.5) * 50.0,
-                    (Math.random() - 0.5) * 50.0* this.ar,
+                    (Math.random() - 0.5) * 250.0* this.ar,
                 )
                 particleManager.reset()
 
